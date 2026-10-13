@@ -1,0 +1,65 @@
+@model RezervasyonListeViewModel
+@{
+    ViewData["Title"] = "Rezervasyonlar";
+    var onceki = Model.Tarih.AddDays(-1);
+    var sonraki = Model.Tarih.AddDays(1);
+}
+
+<div class="sayfa-ust">
+    <div>
+        <h1>Günün Rezervasyonları</h1>
+        <p>@Model.Tarih.ToString("dd MMMM yyyy, dddd") · toplam <strong>@Model.Satirlar.Count</strong> rezervasyon</p>
+    </div>
+    <div class="gun-gezgini">
+        <a class="buton cizgili kucuk" asp-action="Liste" asp-route-tarih="@onceki.ToString("yyyy-MM-dd")">← Önceki</a>
+        <a class="buton cizgili kucuk" asp-action="Liste" asp-route-tarih="@sonraki.ToString("yyyy-MM-dd")">Sonraki →</a>
+    </div>
+</div>
+
+@foreach (var seans in Enum.GetValues<Seans>())
+{
+    var satirlar = Model.Satirlar.Where(s => s.Rezervasyon.Seans == seans).ToList();
+
+    <section class="panel seans-blok">
+        <div class="panel-baslik">
+            <h2>@seans.Ad() <small>@seans.Saat()</small></h2>
+            <a asp-action="Index" asp-route-tarih="@Model.TarihParametre" asp-route-seans="@seans">Boş masa bul →</a>
+        </div>
+
+        @if (satirlar.Count == 0)
+        {
+            <p class="soluk-metin">Bu seansta henüz rezervasyon yok.</p>
+        }
+        else
+        {
+            <table class="tablo">
+                <thead>
+                    <tr>
+                        <th>Masa</th>
+                        <th>Bölge</th>
+                        <th>Öğrenci</th>
+                        <th>Numara</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var satir in satirlar)
+                    {
+                        <tr>
+                            <td data-etiket="Masa"><span class="masa-kodu">@satir.Masa.Kod</span></td>
+                            <td data-etiket="Bölge">@satir.Masa.Bolge</td>
+                            <td data-etiket="Öğrenci">@satir.Rezervasyon.OgrenciAdi</td>
+                            <td data-etiket="Numara"><code>@satir.Rezervasyon.MaskeliNo</code></td>
+                            <td>
+                                <form method="post" asp-action="Iptal" asp-route-id="@satir.Rezervasyon.Id">
+                                    <input type="hidden" name="tarih" value="@Model.TarihParametre" />
+                                    <button class="buton tehlike kucuk" type="submit">İptal et</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+}

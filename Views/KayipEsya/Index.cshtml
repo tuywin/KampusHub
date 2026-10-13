@@ -1,0 +1,80 @@
+@model KayipEsyaListeViewModel
+@{
+    ViewData["Title"] = "Kayıp Eşya İlanları";
+
+    // Durum sekmeleri (null = tümü)
+    var sekmeler = new (EsyaDurumu? Durum, string Ad)[]
+    {
+        (null, "Tümü"),
+        (EsyaDurumu.Kayip, "Kayıp"),
+        (EsyaDurumu.Bulundu, "Bulundu"),
+        (EsyaDurumu.TeslimEdildi, "Teslim edildi")
+    };
+}
+
+<div class="sayfa-ust">
+    <div>
+        <h1>Kayıp Eşya İlanları</h1>
+        <p><strong>@Model.KayipSayisi</strong> kayıp ve <strong>@Model.BulunanSayisi</strong> bulunan eşya ilanı aktif.</p>
+    </div>
+    <a class="buton ana" asp-action="Ekle">＋ Yeni ilan</a>
+</div>
+
+<!-- Durum sekmeleri: diğer filtreler korunarak link üretilir -->
+<nav class="sekmeler" aria-label="İlan durumu">
+    @foreach (var s in sekmeler)
+    {
+        <a class="sekme @(Model.Durum == s.Durum ? "secili" : "")"
+           asp-action="Index" asp-route-durum="@s.Durum"
+           asp-route-arama="@Model.Arama" asp-route-kategori="@Model.Kategori">@s.Ad</a>
+    }
+</nav>
+
+<!-- Arama ve kategori filtresi (GET formu) -->
+<form class="filtre-satiri" method="get" asp-action="Index">
+    <input type="hidden" name="durum" value="@Model.Durum" />
+    <input class="girdi" type="search" name="arama" value="@Model.Arama"
+           placeholder="Eşya, konum veya açıklamada ara (örn. cüzdan, kütüphane)" aria-label="İlanlarda ara" />
+    <select class="girdi" name="kategori" aria-label="Kategori">
+        <option value="">Tüm kategoriler</option>
+        @foreach (var k in Model.Kategoriler)
+        {
+            if (Model.Kategori == k)
+            {
+                <option value="@k" selected>@k</option>
+            }
+            else
+            {
+                <option value="@k">@k</option>
+            }
+        }
+    </select>
+    <button class="buton koyu" type="submit">Filtrele</button>
+</form>
+
+<p class="sonuc-satiri">
+    @Model.Ilanlar.Count ilan bulundu
+    @if (Model.FiltreVar)
+    {
+        <a class="temizle" asp-action="Index">Filtreleri temizle ✕</a>
+    }
+</p>
+
+@if (Model.Ilanlar.Count == 0)
+{
+    <div class="panel bos-durum">
+        <p class="bos-ikon">🔍</p>
+        <h2>Eşleşen ilan yok</h2>
+        <p>Farklı bir kelime deneyin ya da eşyanız için yeni bir ilan verin.</p>
+        <a class="buton ana" asp-action="Ekle">İlan ver</a>
+    </div>
+}
+else
+{
+    <div class="ilan-izgara">
+        @foreach (var ilan in Model.Ilanlar)
+        {
+            <partial name="_IlanKarti" model="ilan" />
+        }
+    </div>
+}

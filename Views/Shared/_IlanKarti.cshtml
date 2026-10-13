@@ -1,0 +1,15 @@
+@model KayipEsya
+@* Partial View: tek bir kayıp eşya ilanının kartı. Pano ve İlanlar sayfasında tekrar kullanılır. *@
+<a class="ilan-karti @(Model.Durum == EsyaDurumu.TeslimEdildi ? "soluk" : "")"
+   asp-controller="KayipEsya" asp-action="Detay" asp-route-id="@Model.Id">
+    <div class="ilan-ust">
+        <span class="ilan-kategori">@Model.Kategori</span>
+        <partial name="_DurumRozeti" model="Model.Durum" />
+    </div>
+    <h3>@Model.Baslik</h3>
+    <p class="ilan-konum">📍 @Model.Konum</p>
+    <p class="ilan-zaman">
+        @(Model.GunOnce == 0 ? "Bugün" : Model.GunOnce == 1 ? "Dün" : $"{Model.GunOnce} gün önce")
+        · @Model.IlanSahibi
+    </p>
+</a>

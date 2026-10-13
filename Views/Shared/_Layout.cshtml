@@ -1,0 +1,89 @@
+@{
+    var aktifController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var aktifAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    // Menüde bulunduğumuz sayfayı vurgular
+    string Aktif(string controller, params string[] actionlar) =>
+        aktifController == controller && (actionlar.Length == 0 || actionlar.Contains(aktifAction))
+            ? "aktif" : "";
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] · Nokta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="uygulama">
+        <!-- Yan menü -->
+        <aside class="yan-menu" id="yanMenu">
+            <a class="marka" asp-controller="Home" asp-action="Index">
+                <span class="marka-nokta"></span>
+                <span>nokta<small>kampüs</small></span>
+            </a>
+
+            <nav class="menu">
+                <p class="menu-grup">Genel</p>
+                <a class="@Aktif("Home", "Index")" asp-controller="Home" asp-action="Index">
+                    <span class="menu-ikon">◎</span> Pano
+                </a>
+
+                <p class="menu-grup">Kayıp Eşya</p>
+                <a class="@Aktif("KayipEsya", "Index", "Detay")" asp-controller="KayipEsya" asp-action="Index">
+                    <span class="menu-ikon">⌕</span> İlanlar
+                </a>
+                <a class="@Aktif("KayipEsya", "Ekle")" asp-controller="KayipEsya" asp-action="Ekle">
+                    <span class="menu-ikon">＋</span> İlan Ver
+                </a>
+
+                <p class="menu-grup">GençOfis</p>
+                <a class="@Aktif("Rezervasyon", "Index", "Olustur")" asp-controller="Rezervasyon" asp-action="Index">
+                    <span class="menu-ikon">▦</span> Masa Planı
+                </a>
+                <a class="@Aktif("Rezervasyon", "Liste")" asp-controller="Rezervasyon" asp-action="Liste">
+                    <span class="menu-ikon">☰</span> Rezervasyonlar
+                </a>
+
+                <p class="menu-grup">Proje</p>
+                <a class="@Aktif("Home", "Hakkinda")" asp-controller="Home" asp-action="Hakkinda">
+                    <span class="menu-ikon">i</span> Hakkında
+                </a>
+            </nav>
+
+            <p class="yan-alt">İleri Web Programlama<br />ASP.NET Core 8 MVC</p>
+        </aside>
+
+        <!-- Sayfa içeriği -->
+        <div class="ana">
+            <header class="ust-serit">
+                <button class="menu-ac" id="menuAc" type="button" aria-label="Menüyü aç" aria-controls="yanMenu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+                <span class="sayfa-adi">@ViewData["Title"]</span>
+                <span class="bugun">@DateTime.Today.ToString("dd MMMM yyyy, dddd")</span>
+            </header>
+
+            <main class="icerik">
+                @if (TempData["Mesaj"] is string mesaj)
+                {
+                    <div class="bildirim basarili" role="status">✓ @mesaj</div>
+                }
+                @if (TempData["Hata"] is string hata)
+                {
+                    <div class="bildirim hatali" role="alert">! @hata</div>
+                }
+
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <div class="perde" id="perde"></div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

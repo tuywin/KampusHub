@@ -1,0 +1,57 @@
+@model KayipEsya
+@{
+    ViewData["Title"] = Model.Baslik;
+    var konu = Uri.EscapeDataString("Nokta ilanı: " + Model.Baslik);
+}
+
+<a class="geri" asp-action="Index">← İlanlara dön</a>
+
+<div class="detay-izgara">
+    <article class="panel">
+        <div class="ilan-ust">
+            <span class="ilan-kategori">@Model.Kategori</span>
+            <partial name="_DurumRozeti" model="Model.Durum" />
+        </div>
+        <h1 class="detay-baslik">@Model.Baslik</h1>
+        <p class="detay-aciklama">@Model.Aciklama</p>
+
+        <dl class="bilgi-listesi">
+            <div>
+                <dt>@(Model.Durum == EsyaDurumu.Bulundu ? "Bulunduğu yer" : "Kaybolduğu yer")</dt>
+                <dd>@Model.Konum</dd>
+            </div>
+            <div>
+                <dt>Tarih</dt>
+                <dd>@Model.Tarih.ToString("dd MMMM yyyy, dddd")</dd>
+            </div>
+            <div>
+                <dt>İlan sahibi</dt>
+                <dd>@Model.IlanSahibi</dd>
+            </div>
+            <div>
+                <dt>İlan no</dt>
+                <dd>#@Model.Id.ToString("D4")</dd>
+            </div>
+        </dl>
+    </article>
+
+    <aside class="panel iletisim-paneli">
+        @if (Model.Durum == EsyaDurumu.TeslimEdildi)
+        {
+            <p class="buyuk-ikon">🎉</p>
+            <h2>Sahibine ulaştı</h2>
+            <p class="soluk-metin">Bu eşya sahibine teslim edildi. İlan arşivde duruyor.</p>
+        }
+        else
+        {
+            <h2>@(Model.Durum == EsyaDurumu.Kayip ? "Bu eşyayı buldun mu?" : "Bu eşya senin mi?")</h2>
+            <p class="soluk-metin">İlan sahibine e-posta ile ulaşabilirsin.</p>
+            <a class="buton ana tam" href="mailto:@(Model.Eposta)?subject=@(konu)">E-posta gönder</a>
+
+            <form method="post" asp-action="TeslimEt" asp-route-id="@Model.Id">
+                <button class="buton cizgili tam" type="submit">Teslim edildi olarak işaretle</button>
+            </form>
+            <p class="kucuk-not">Eşya sahibine ulaştığında ilanı kapatmayı unutma.</p>
+        }
+    </aside>
+</div>

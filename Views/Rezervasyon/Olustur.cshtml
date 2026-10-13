@@ -1,0 +1,63 @@
+@model RezervasyonFormViewModel
+@{
+    ViewData["Title"] = "Masa Rezervasyonu";
+    var tarihParametre = Model.Tarih.ToString("yyyy-MM-dd");
+}
+
+<a class="geri" asp-action="Index" asp-route-tarih="@tarihParametre" asp-route-seans="@Model.Seans">← Masa planına dön</a>
+
+<div class="detay-izgara">
+    <form class="panel form" method="post" asp-action="Olustur" novalidate>
+        <h1 class="detay-baslik">@(Model.Masa?.Kod) masasını ayırt</h1>
+        <div asp-validation-summary="ModelOnly" class="form-ozet-hata"></div>
+
+        <!-- Hangi masa / gün / seans: gizli alanlarla geri gönderilir -->
+        <input type="hidden" name="MasaId" value="@Model.MasaId" />
+        <input type="hidden" name="Tarih" value="@tarihParametre" />
+        <input type="hidden" name="Seans" value="@Model.Seans" />
+
+        <div class="form-izgara">
+            <div class="alan">
+                <label asp-for="OgrenciAdi">Ad Soyad *</label>
+                <input class="girdi" asp-for="OgrenciAdi" placeholder="Örn. Ayşe Yılmaz" />
+                <span asp-validation-for="OgrenciAdi" class="alan-hata"></span>
+            </div>
+            <div class="alan">
+                <label asp-for="OgrenciNo">Öğrenci numarası *</label>
+                <input class="girdi" asp-for="OgrenciNo" inputmode="numeric" placeholder="Örn. 220101045" />
+                <span asp-validation-for="OgrenciNo" class="alan-hata"></span>
+            </div>
+        </div>
+
+        <div class="kurallar">
+            <h2>GençOfis kuralları</h2>
+            <ul>
+                <li>Sessiz alanda telefonla konuşulmaz.</li>
+                <li>Seans başladıktan 15 dakika sonra gelinmezse rezervasyon iptal edilir.</li>
+                <li>Masada eşya bırakarak yer tutulmaz.</li>
+            </ul>
+            <label class="onay">
+                <input asp-for="KurallariKabul" />
+                <span>Kuralları okudum, kabul ediyorum.</span>
+            </label>
+            <span asp-validation-for="KurallariKabul" class="alan-hata"></span>
+        </div>
+
+        <div class="form-alt">
+            <a class="buton cizgili" asp-action="Index" asp-route-tarih="@tarihParametre" asp-route-seans="@Model.Seans">Vazgeç</a>
+            <button class="buton ana" type="submit">Rezervasyonu onayla</button>
+        </div>
+    </form>
+
+    <aside class="panel ozet-paneli">
+        <h2>Özet</h2>
+        <dl class="bilgi-listesi">
+            <div><dt>Masa</dt><dd>@(Model.Masa?.Kod)</dd></div>
+            <div><dt>Bölge</dt><dd>@(Model.Masa?.Bolge)</dd></div>
+            <div><dt>Kapasite</dt><dd>@(Model.Masa?.Kapasite) kişilik</dd></div>
+            <div><dt>Priz</dt><dd>@(Model.Masa?.Prizli == true ? "Var ⚡" : "Yok")</dd></div>
+            <div><dt>Tarih</dt><dd>@Model.Tarih.ToString("dd MMMM yyyy, dddd")</dd></div>
+            <div><dt>Seans</dt><dd>@Model.Seans.Ad() · @Model.Seans.Saat()</dd></div>
+        </dl>
+    </aside>
+</div>

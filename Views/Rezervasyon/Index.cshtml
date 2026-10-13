@@ -1,0 +1,74 @@
+@model MasaPlaniViewModel
+@{
+    ViewData["Title"] = "GençOfis Masa Planı";
+    var bolgeler = Model.Masalar.GroupBy(m => m.Masa.Bolge);
+}
+
+<div class="sayfa-ust">
+    <div>
+        <h1>GençOfis Masa Planı</h1>
+        <p>
+            @Model.Tarih.ToString("dd MMMM dddd") · @Model.Seans.Ad() (@Model.Seans.Saat()) ·
+            <strong>@Model.BosSayisi</strong> / @Model.Masalar.Count masa boş
+        </p>
+    </div>
+    <a class="buton cizgili" asp-action="Liste" asp-route-tarih="@Model.TarihParametre">Günün rezervasyonları</a>
+</div>
+
+<!-- 1) Gün seçimi: önümüzdeki 7 gün Razor ile üretilir -->
+<nav class="gun-seridi" aria-label="Gün seçimi">
+    @foreach (var gun in Model.Gunler)
+    {
+        <a class="gun @(gun.Date == Model.Tarih.Date ? "secili" : "")"
+           asp-action="Index" asp-route-tarih="@gun.ToString("yyyy-MM-dd")" asp-route-seans="@Model.Seans">
+            <span>@(gun.Date == DateTime.Today ? "Bugün" : gun.ToString("ddd"))</span>
+            <strong>@gun.Day</strong>
+        </a>
+    }
+</nav>
+
+<!-- 2) Seans seçimi -->
+<nav class="sekmeler" aria-label="Seans seçimi">
+    @foreach (var seans in Enum.GetValues<Seans>())
+    {
+        <a class="sekme @(seans == Model.Seans ? "secili" : "")"
+           asp-action="Index" asp-route-tarih="@Model.TarihParametre" asp-route-seans="@seans">
+            @seans.Ad() <small>@seans.Saat()</small>
+        </a>
+    }
+</nav>
+
+<div class="lejant">
+    <span><i class="kutucuk bos"></i> Boş – tıkla ve ayır</span>
+    <span><i class="kutucuk dolu"></i> Dolu</span>
+    <span>⚡ Prizli masa</span>
+</div>
+
+<!-- 3) Masa planı: bölgelere göre gruplanmış masalar -->
+@foreach (var bolge in bolgeler)
+{
+    <section class="bolge">
+        <h2>@bolge.Key <small>@bolge.Count(m => !m.Dolu) boş</small></h2>
+        <div class="masa-izgara">
+            @foreach (var md in bolge)
+            {
+                if (md.Dolu)
+                {
+                    <div class="masa dolu" title="@md.Masa.Kod – dolu">
+                        <strong>@md.Masa.Kod</strong>
+                        <span>Dolu</span>
+                    </div>
+                }
+                else
+                {
+                    <a class="masa bos" title="@md.Masa.Kod masasını ayır"
+                       asp-action="Olustur" asp-route-masaId="@md.Masa.Id"
+                       asp-route-tarih="@Model.TarihParametre" asp-route-seans="@Model.Seans">
+                        <strong>@md.Masa.Kod @(md.Masa.Prizli ? "⚡" : "")</strong>
+                        <span>@md.Masa.Kapasite kişilik</span>
+                    </a>
+                }
+            }
+        </div>
+    </section>
+}

@@ -1,0 +1,82 @@
+@model KayipEsya
+@inject IKayipEsyaService EsyaServisi
+@{
+    ViewData["Title"] = "İlan Ver";
+}
+
+<div class="sayfa-ust">
+    <div>
+        <h1>Yeni ilan</h1>
+        <p>Kaybettiğin ya da bulduğun bir eşyayı bildir. Yıldızlı alanlar zorunlu.</p>
+    </div>
+</div>
+
+<form class="panel form" method="post" asp-action="Ekle" novalidate>
+    <div asp-validation-summary="ModelOnly" class="form-ozet-hata"></div>
+
+    <!-- İlan türü: radio butonlar enum değerine bağlanır -->
+    <fieldset class="tur-secimi">
+        <legend>İlan türü *</legend>
+        <label class="tur">
+            <input type="radio" asp-for="Durum" value="@EsyaDurumu.Kayip" />
+            <span><strong>Kaybettim</strong><small>Eşyamı arıyorum</small></span>
+        </label>
+        <label class="tur">
+            <input type="radio" asp-for="Durum" value="@EsyaDurumu.Bulundu" />
+            <span><strong>Buldum</strong><small>Sahibini arıyorum</small></span>
+        </label>
+        <span asp-validation-for="Durum" class="alan-hata"></span>
+    </fieldset>
+
+    <div class="form-izgara">
+        <div class="alan">
+            <label asp-for="Baslik">Eşya adı *</label>
+            <input class="girdi" asp-for="Baslik" placeholder="Örn. Siyah deri cüzdan" />
+            <span asp-validation-for="Baslik" class="alan-hata"></span>
+        </div>
+
+        <div class="alan">
+            <label asp-for="Kategori">Kategori *</label>
+            <select class="girdi" asp-for="Kategori" asp-items="@(new SelectList(EsyaServisi.Kategoriler))">
+                <option value="">Seçin…</option>
+            </select>
+            <span asp-validation-for="Kategori" class="alan-hata"></span>
+        </div>
+
+        <div class="alan">
+            <label asp-for="Konum">Konum *</label>
+            <input class="girdi" asp-for="Konum" placeholder="Örn. Merkez Kütüphane 2. kat" />
+            <span asp-validation-for="Konum" class="alan-hata"></span>
+        </div>
+
+        <div class="alan">
+            <label asp-for="Tarih">Tarih *</label>
+            <input class="girdi" asp-for="Tarih" type="date" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+            <span asp-validation-for="Tarih" class="alan-hata"></span>
+        </div>
+
+        <div class="alan genis">
+            <label asp-for="Aciklama">Açıklama *</label>
+            <textarea class="girdi" asp-for="Aciklama" rows="4"
+                      placeholder="Renk, marka, ayırt edici özellikler, eşyayı nereye bıraktığın..."></textarea>
+            <span asp-validation-for="Aciklama" class="alan-hata"></span>
+        </div>
+
+        <div class="alan">
+            <label asp-for="IlanSahibi">Adın *</label>
+            <input class="girdi" asp-for="IlanSahibi" placeholder="Örn. Deniz K." />
+            <span asp-validation-for="IlanSahibi" class="alan-hata"></span>
+        </div>
+
+        <div class="alan">
+            <label asp-for="Eposta">E-posta *</label>
+            <input class="girdi" asp-for="Eposta" type="email" placeholder="ad.soyad@ornek.edu.tr" />
+            <span asp-validation-for="Eposta" class="alan-hata"></span>
+        </div>
+    </div>
+
+    <div class="form-alt">
+        <a class="buton cizgili" asp-action="Index">Vazgeç</a>
+        <button class="buton ana" type="submit">İlanı yayınla</button>
+    </div>
+</form>

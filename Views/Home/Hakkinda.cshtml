@@ -1,0 +1,37 @@
+@{
+    ViewData["Title"] = "Hakkında";
+}
+
+<div class="sayfa-ust">
+    <div>
+        <h1>Nokta nedir?</h1>
+        <p>Kampüste iki küçük ama sinir bozucu sorunu tek bir yerde çözen bir web uygulaması.</p>
+    </div>
+</div>
+
+<section class="ozellik-izgara">
+    <article class="panel ozellik">
+        <span class="ozellik-numara">01</span>
+        <h2>Kayıp Eşya</h2>
+        <p>Kaybedilen ya da bulunan eşyalar WhatsApp gruplarında kayboluyor. Nokta'da ilanlar kategori,
+           konum ve duruma göre aranabilir; eşya sahibine ulaşınca "teslim edildi" olarak işaretlenir.</p>
+    </article>
+    <article class="panel ozellik">
+        <span class="ozellik-numara">02</span>
+        <h2>GençOfis Masa Rezervasyonu</h2>
+        <p>GençOfis'e gidip boş masa aramak yerine; gün ve seans seçilerek masa planı görülür,
+           boş masa birkaç saniyede ayrılır. Aynı masa aynı seansta iki kez ayrılamaz.</p>
+    </article>
+</section>
+
+<section class="panel">
+    <h2 class="kucuk-baslik">Teknik yapı</h2>
+    <div class="teknik-izgara">
+        <div><strong>3 Controller</strong><span>Home · KayipEsya · Rezervasyon</span></div>
+        <div><strong>ViewModel</strong><span>Her sayfaya özel, güçlü tipli model sınıfları</span></div>
+        <div><strong>Service + DI</strong><span>IKayipEsyaService ve IRezervasyonService, Program.cs'te kayıtlı</span></div>
+        <div><strong>Partial View</strong><span>_IlanKarti ve _DurumRozeti tekrar kullanılıyor</span></div>
+        <div><strong>Form + Doğrulama</strong><span>Data Annotations, ModelState, AntiForgery</span></div>
+        <div><strong>Responsive</strong><span>Yan menü mobilde açılır panele dönüşür</span></div>
+    </div>
+</section>

@@ -1,0 +1,79 @@
+@model PanoViewModel
+@{
+    ViewData["Title"] = "Pano";
+}
+
+<section class="karsilama">
+    <div>
+        <p class="ust-yazi">Kampüs yardımcın</p>
+        <h1>Kaybettiğini bul, <em>masanı ayırt.</em></h1>
+        <p class="karsilama-metin">Kayıp eşya ilanlarına göz at ya da GençOfis'te boş bir çalışma masası ayır.</p>
+    </div>
+    <div class="hizli-islemler">
+        <a class="buton ana" asp-controller="KayipEsya" asp-action="Ekle">＋ İlan ver</a>
+        <a class="buton cizgili" asp-controller="Rezervasyon" asp-action="Index">Masa ayır →</a>
+    </div>
+</section>
+
+<!-- Sayaçlar: değerler servislerden gelir -->
+<section class="sayaclar">
+    <a class="sayac" asp-controller="KayipEsya" asp-action="Index" asp-route-durum="@EsyaDurumu.Kayip">
+        <span class="sayac-etiket">Kayıp ilanı</span>
+        <strong>@Model.KayipSayisi</strong>
+    </a>
+    <a class="sayac" asp-controller="KayipEsya" asp-action="Index" asp-route-durum="@EsyaDurumu.Bulundu">
+        <span class="sayac-etiket">Bulunan eşya</span>
+        <strong>@Model.BulunanSayisi</strong>
+    </a>
+    <a class="sayac" asp-controller="KayipEsya" asp-action="Index" asp-route-durum="@EsyaDurumu.TeslimEdildi">
+        <span class="sayac-etiket">Sahibine ulaştı</span>
+        <strong>@Model.TeslimSayisi</strong>
+    </a>
+    <a class="sayac vurgulu" asp-controller="Rezervasyon" asp-action="Index">
+        <span class="sayac-etiket">GençOfis'te boş masa</span>
+        <strong>@Model.BosMasa<small>/@Model.ToplamMasa</small></strong>
+    </a>
+</section>
+
+<section class="iki-sutun">
+    <div class="panel">
+        <div class="panel-baslik">
+            <h2>Son ilanlar</h2>
+            <a asp-controller="KayipEsya" asp-action="Index">Tümünü gör →</a>
+        </div>
+        <div class="ilan-izgara iki">
+            @foreach (var ilan in Model.SonIlanlar)
+            {
+                <partial name="_IlanKarti" model="ilan" />
+            }
+        </div>
+    </div>
+
+    <div class="panel ofis-ozet">
+        <div class="panel-baslik">
+            <h2>GençOfis şu an</h2>
+        </div>
+        <p class="seans-bilgi">@Model.AktifSeans.Ad() seansı · @Model.AktifSeans.Saat()</p>
+        <div class="halka" style="--oran:@Model.DolulukYuzdesi">
+            <div class="halka-ic">
+                <strong>%@Model.DolulukYuzdesi</strong>
+                <span>dolu</span>
+            </div>
+        </div>
+        <p class="ofis-not">
+            @if (Model.BosMasa == 0)
+            {
+                <span>Bu seansta tüm masalar dolu. Bir sonraki seansa bakabilirsin.</span>
+            }
+            else if (Model.BosMasa <= 3)
+            {
+                <span>Acele et, sadece <strong>@Model.BosMasa</strong> masa kaldı!</span>
+            }
+            else
+            {
+                <span><strong>@Model.BosMasa</strong> masa seni bekliyor.</span>
+            }
+        </p>
+        <a class="buton ana tam" asp-controller="Rezervasyon" asp-action="Index">Masa planını aç</a>
+    </div>
+</section>
